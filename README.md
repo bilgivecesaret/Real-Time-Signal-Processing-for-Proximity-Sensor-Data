@@ -52,10 +52,3 @@ You can make any changes you want to to server.py
 * Proximity: isNear, value, maxRange
 * Link: https://github.com/kprimice/react-native-sensor-manager
 * Camera and Audio: base64 encoded strings
-
-## Contribution guidelines (Optional)
-This repository is open to contributions. 
-On the server side, we are looking to support sample servers in more languages and frameworks such as node.js, Go etc.
-Please feel free to raise PRs!
-
-### For more support, please e-mail priyankar.kumar98@gmail.com and I will get back to you ASAP.

@@ -1,54 +1,87 @@
-# Sensor Stream App
+# Automated Valet Parking
+## 1. Introduction
+This repo provides an algorithm which uses hybrid a star for the initial path and the optimization based method to generate the trajectory. The pipeline of this algorithm is:
 
-Sensor Stream allows you to convert your phone into a complete sensor hub and stream real-time sensor information from your phone to the provided open source server over wifi/local network. The server can be modified as per your use-case. The app can be used to build IoT applications, for data science projects and many more use cases!
+Hybrid A star -> Path optimization -> Cubic interpolation -> Velocity plan -> Solve optimization problem (use IPOPT)
 
-# Sensor Stream Server
-These are simple servers with WebSocket support that accept the sensor data and write it to a text file. These are companion sample servers for the Sensor Stream app.
+---
 
-# Steps:
-* Clone the repository or download the zip file and unzip it to a directory of your choice.
-* Make sure you have given the app all the necessary access permissions (especially if you wish to use audio streaming/image streaming)
-
-## To Run the Python Server (version >= Python 3.0)
-
-* Make sure you have python (version >=3) installed and you can access both pip and python from the command line/ terminal
-* To check the same open command line/terminal and type `python --version` and `pip --version`
-* cd to the directory where the folder was extracted in the command line
-* Optional Step: It's highly recommended, you create a virtual env before installing dependencies. Activate the virtual environment and proceed. OS specific steps are available in the docs [https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/]
-
-**Brief Summary of steps to follow to create virtual env [Optional Step]**
+### 1.1 File Structure
 ```
-cd Python
-cd server
-py -m venv env # Create virtual env
-source env/bin/activate (On Linux or Mac) or .\env\Scripts\activate (On Windows)
+.
+├── animation
+│   ├── animation.py
+│   └── record_solution.py
+├── collision_check
+│   ├── collision_check.py
+├── config
+│   ├── config.yaml
+│   └── read_config.py
+├── interpolation
+│   └── path_interpolation.py
+├── main.py
+├── map
+│   ├── costmap.py
+├── optimization
+│   ├── ocp_optimization.py
+│   └── path_optimazition.py
+├── path_plan
+│   ├── compute_h.py
+│   ├── hybrid_a_star.py
+│   ├── path_planner.py
+│   └── rs_curve.py
+├── util_math
+│   ├── coordinate_transform.py
+│   └── spline.py
+└── velocity_plan
+    └── velocity_planner.py
 ```
 
-**Final Installation and run steps**
- ```
- cd SensorStreamServer
- cd server
- pip install -r requirements.txt 
- python3 server.py
- ```
+### 1.2 Requirement
+Python version == 3.8 and Only support Ubuntu system (tested in 20.04, but I think 18.04 is suitable as well)
 
+Not support in windows 64bit because the IPOPT could be not executable. 
+```
+pip install -r requirements.txt
 
-## To use the app
-* Make sure both your phone and the laptop/raspi/other device are on same network.
-* Find the internal ip address of the raspi/laptop. The server should be showing you the same.
-* Simply type the ip address:5000.Example: 192.168.1.24:5000 in the app's input bar. 
-* Switch on whatever sensor's data you want to stream.
+conda install -c conda-forge ipopt
+```
 
-You can make any changes you want to to server.py
+### 1.3 Data Structure
+The Case1.csv is provided by https://www.tpcap.net/#/benchmarks, and the details of this file are presented by the following:
 
-## Data Format Cheat sheet:
-* Accelerometer: x,y,z
-* Gyroscope: x,y,z
-* Magnetometer: x,y,z
-* Orientation: azimuth,pitch,roll
-* Step Counter: steps
-* Thermometer: temperature
-* Light Sensor: light
-* Proximity: isNear, value, maxRange
-* Link: https://github.com/kprimice/react-native-sensor-manager
-* Camera and Audio: base64 encoded strings
+>The first six rows of the vector record the initial and goal poses of the to-be-parked vehicle. Suppose $V$ is the data vector.
+> - $x_{0}$ = $V$[ 1 ], $y_{0}$ = $V$[ 2 ], $\theta_{0}$ = $V$[ 3 ]
+> - $x_{f}$ = $V$[ 4 ], $y_f$ = $V$[ 5 ], $\theta_f$ = $V$[ 6 ]. 
+> - $V$[ 7 ] records the total number of obstacles in the parking scenario. 
+> - $V$[ 7+$i$ ] presents the number of vertexes in the $i$-th obstacle, where the index $i$ ranges from 1 to $V$[7]. 
+> - After that, the vertexes of each obstacle are presented by their 2D coordinate values in the $x$ and $y$ axes. 
+---
+**Note**: you can build your own parking map based on the above rules and store the .csv file in the BenchmarkCase folder.
+
+## 2. Usage
+run the main.py to solve the scenario and show the animation process. There are two modes, mode 0 is to solve the scenario, and mode 1 is to plot the speed or accelariot curve.
+```
+python main.py
+```
+
+The solution of the trajectory is stored as a .csv file and its column name is `[x,y,theta,v,a,sigma,omega,t]`
+
+The aniamation pictures including gif and png is stored in the pictures folder.
+
+![case1_png](pictures/Case1/Case1.png "Case_1 Traj_Png")
+
+![case1_png](pictures/Case2/Case2.png "Case_2 Traj_Png")
+
+![case1_png](pictures/Case3/Case3.png "Case_3 Traj_Png")
+
+![Case1_gif](pictures/Case1/Case1.gif "Case_1_Traj_gif")
+
+![Case1_gif](pictures/Case2/Case2.gif "Case_2_Traj_gif")
+
+![Case1_gif](pictures/Case3/Case3.gif "Case_3_Traj_gif")
+
+## 3. Todo List
+ 
+- [ ] more spine function
+- [ ] more velocity plan function

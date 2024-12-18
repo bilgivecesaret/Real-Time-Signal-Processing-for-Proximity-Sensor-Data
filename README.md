@@ -1,87 +1,93 @@
-# Automated Valet Parking
-## 1. Introduction
-This repo provides an algorithm which uses hybrid a star for the initial path and the optimization based method to generate the trajectory. The pipeline of this algorithm is:
+# The Obstacle Detection & Avoidance Dataset
 
-Hybrid A star -> Path optimization -> Cubic interpolation -> Velocity plan -> Solve optimization problem (use IPOPT)
+Julien Dupeyroux, Raoul Dinaux, Nikhil Wessendorp, and Guido de Croon. <br/>*Micro Air Vehicle Lab, Faculty of Aerospace Engineering,  Delft  University  of  Technology,  The  Netherlands.*
+
+**Abstract** - It is now possible to make autonomous UAVs perform real feats, like autonomous drone racing (e.g., [AlphaPilot 2019 - Lockheed Martin AI Drone Racing Innovation Challenge](https://www.lockheedmartin.com/en-us/news/events/ai-innovation-challenge.html)), or aggressive maneuvers to make [MAVs cross windows](https://www.liebertpub.com/doi/full/10.1089/soro.2017.0120), or perform [aerial acrobatic maneuvers](http://www.roboticsproceedings.org/rss16/p040.pdf). Yet, it is quite disconcerting to note how difficult it is to autonomously achieve one of the most essential tasks for drones, namely, obstacle detection and avoidance. The complexity is essentially due to the difficulty to detect obstacles in the focus of expansion, where the optic flow is close to zero. This problem gets even harder in real environments where, for instance, the light intensity can change, sometimes abruptly, making it impossible to ensure the robustness of autonomous systems for obstacle detection and avoidance. In this paper, we introduce the Obstacle Avoidance Dataset for Drones, aiming at providing raw data obtained in a real indoor environment with sensors adapted for aerial robotics, and focusing on obstacle detection around the focus of expansion. Our MAV is equipped with the following sensors: (i) an event-based camera, the dynamic performance of which make it optimized for drone applications; (ii) a standard RGB camera; (iii) a 24-GHz radar sensor to enhance multi-sensory solutions; and (iv) a 6-axes IMU. The ground truth position and attitude is provided by the OptiTrack motion capture system. The resulting dataset consists in more than 1300 samples obtained in 4 distinct conditions (1 or 2 obstacles, full or dim light). It is intended for benchmarking algorithmic and neural solutions for obstacle detection and avoidance with UAVs, but also course estimation and therefore autonomous navigation.
 
 ---
 
-### 1.1 File Structure
-```
-.
-├── animation
-│   ├── animation.py
-│   └── record_solution.py
-├── collision_check
-│   ├── collision_check.py
-├── config
-│   ├── config.yaml
-│   └── read_config.py
-├── interpolation
-│   └── path_interpolation.py
-├── main.py
-├── map
-│   ├── costmap.py
-├── optimization
-│   ├── ocp_optimization.py
-│   └── path_optimazition.py
-├── path_plan
-│   ├── compute_h.py
-│   ├── hybrid_a_star.py
-│   ├── path_planner.py
-│   └── rs_curve.py
-├── util_math
-│   ├── coordinate_transform.py
-│   └── spline.py
-└── velocity_plan
-    └── velocity_planner.py
-```
+The full dataset is available at: <br/>https://data.4tu.nl/articles/dataset/The_Obstacle_Detection_and_Avoidance_Dataset_for_Drones/14214236/1
 
-### 1.2 Requirement
-Python version == 3.8 and Only support Ubuntu system (tested in 20.04, but I think 18.04 is suitable as well)
-
-Not support in windows 64bit because the IPOPT could be not executable. 
-```
-pip install -r requirements.txt
-
-conda install -c conda-forge ipopt
-```
-
-### 1.3 Data Structure
-The Case1.csv is provided by https://www.tpcap.net/#/benchmarks, and the details of this file are presented by the following:
-
->The first six rows of the vector record the initial and goal poses of the to-be-parked vehicle. Suppose $V$ is the data vector.
-> - $x_{0}$ = $V$[ 1 ], $y_{0}$ = $V$[ 2 ], $\theta_{0}$ = $V$[ 3 ]
-> - $x_{f}$ = $V$[ 4 ], $y_f$ = $V$[ 5 ], $\theta_f$ = $V$[ 6 ]. 
-> - $V$[ 7 ] records the total number of obstacles in the parking scenario. 
-> - $V$[ 7+$i$ ] presents the number of vertexes in the $i$-th obstacle, where the index $i$ ranges from 1 to $V$[7]. 
-> - After that, the vertexes of each obstacle are presented by their 2D coordinate values in the $x$ and $y$ axes. 
 ---
-**Note**: you can build your own parking map based on the above rules and store the .csv file in the BenchmarkCase folder.
 
-## 2. Usage
-run the main.py to solve the scenario and show the animation process. There are two modes, mode 0 is to solve the scenario, and mode 1 is to plot the speed or accelariot curve.
-```
-python main.py
-```
+Link to the supporting data paper: <br/>https://link/to/the/datapaper/on/arXiv
 
-The solution of the trajectory is stored as a .csv file and its column name is `[x,y,theta,v,a,sigma,omega,t]`
+---
 
-The aniamation pictures including gif and png is stored in the pictures folder.
+*This project has received funding from the ECSEL Joint Undertaking (JU) under grant agreement No. 826610. The JU receives support from the European Union's Horizon 2020 research and innovation program and Spain, Austria, Belgium, Czech Republic, France, Italy, Latvia and Netherlands.* 
 
-![case1_png](pictures/Case1/Case1.png "Case_1 Traj_Png")
+---
 
-![case1_png](pictures/Case2/Case2.png "Case_2 Traj_Png")
+## 1. The dataset
 
-![case1_png](pictures/Case3/Case3.png "Case_3 Traj_Png")
+### 1.1. The acquisition setup
 
-![Case1_gif](pictures/Case1/Case1.gif "Case_1_Traj_gif")
+The MAV is equipped with the following sensors: 
+- Event-based camera DVS240 
+- 6-axes IMU sensor (gyroscope & accelerometer)
+- 24-GHz Radar sensor 
+- Full HD RGB camera
 
-![Case1_gif](pictures/Case2/Case2.gif "Case_2_Traj_gif")
+The ground truth position and attitude of the MAV is determined by means of the OptiTrack motion capture system available in the [Cyber Zoo](https://tudelftroboticsinstitute.nl/labs/cyber-zoo) (flying arena facility of the TU Delft).
 
-![Case1_gif](pictures/Case3/Case3.gif "Case_3_Traj_gif")
+The data are collected using a ROS environment set up onboard the Odroid XU4 flashed with Linux 16.04 Xenial. For each trial, a pilot flies the MAV towards the center of the Cyber Zoo where one or two obstacles (i.e. poles) are placed. Depending on the position of the MAV, the pilot chooses to either turn left or right (avoidance), or continue straight-forward. 
 
-## 3. Todo List
- 
-- [ ] more spine function
-- [ ] more velocity plan function
+### 1.2. Availability
+
+The dataset contains a total of **1369 trials**. For each trial, we provide the data in both **ROS bags** and **CSV** formats (DVS, IMU, Radar, OptiTrack). The videos provided by the RGB camera are made available in **.avi** format. A Python script (`convert_rosbags_to_csv.py`) allows the conversion of the dataset from ROS bags to CSV. 
+
+### 1.3. Testing conditions
+
+The samples were recorded under the following lighting conditions:
+- Full light (100 Lux) [1286]
+- Dim light (1-3 Lux) [83]
+
+Also, we varied the number of obstacles available in the flying arena: 
+- 1 obstacle [742]
+- 2 obstacles [627]
+
+The summary of these conditions is given in the `trial_overview.csv` file (in the dataset). 
+
+---
+
+## 2. How to use the dataset
+
+Rendering has been performed for samples 3, 10 and 345 (samples attached to this GitHub repository for testing). Specific requirements: 
+
+    sudo apt-get install ffmpeg
+    python -m pip install scipy opencv-python
+
+### 2.1. Using ROS Bags
+
+If you aim at using ROS bags, you can use the following codes to render visualization for a given sample:
+- `test_optitrack_ros.py`
+- `test_radar_ros.py`
+- `test_dvs_ros.py`
+- `test_imu_ros.py`
+
+Usage: `test_<sensor>_ros.py <ID>` where ID of the sample ranges from 1 to 1369. Some tests may result in unwanted issues (see section 2.3. below). 
+
+One sample can also be visualized at a glance using the `sample_visualization_ros.py` script, adding the ID of the sample as first argument. See example below.
+
+![](visualization_sample_3/full_sample_3.png)
+
+### 2.2. Using CSV files
+
+If you aim at using CSV files, you can use the following codes to render visualization for a given sample:
+- `test_optitrack_csv.py`
+- `test_radar_csv.py`
+- `test_dvs_csv.py`
+- `test_imu_csv.py`
+
+Usage: `test_<sensor>_csv.py <ID>` where ID of the sample ranges from 1 to 1369. Some tests may result in unwanted issues (see section 2.3. below). 
+
+One sample can also be visualized at a glance using the `sample_visualization_csv.py` script, adding the ID of the sample as first argument. 
+
+### 2.3. Important information
+
+**TODO**: add all specifications about reference frames!
+
+Please report any problem you encounter to Julien Dupeyroux (j.j.g.dupeyroux@tudelft.nl). So far, here are the known issues (already reported to the `trial_overview.csv` file):
+- Samples 1306, 1321, and 1344 seem to be corrupted.
+- 216 samples don't contain the RGB camera video.
+- Samples 593 to 629 are missing the coordinates of the obstacle.

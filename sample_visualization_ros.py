@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-# @author Julien Dupeyroux
+# @author Julien Dupeyroux, 21050161003 Ugur Ozkan,  
 
 import numpy as np 
 from PIL import Image

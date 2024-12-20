@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-# @author Julien Dupeyroux, Nikhil Wessendorp
+# @author Julien Dupeyroux, Nikhil Wessendorp, 21050161003 Ugur Ozkan,
 
 import numpy as np 
 import matplotlib.pyplot as plt 

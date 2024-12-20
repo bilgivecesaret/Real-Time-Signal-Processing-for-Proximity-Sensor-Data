@@ -106,7 +106,7 @@ if __name__ == '__main__':
     dvs_currentTime = 0
 
     # Collect DVS data
-    with open("dataset_ros/" + str(ID) + "/dvs.csv") as f:
+    with open("dataset/" + str(ID) + "/dvs.csv") as f:
         reader = csv.reader(f)
         next(reader, None)
         for row in reader:

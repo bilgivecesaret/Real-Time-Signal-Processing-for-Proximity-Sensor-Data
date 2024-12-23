@@ -17,7 +17,7 @@
 
 % Title Page Info
 \title{Real Time Signal Processing for Proximity Sensor Data}
-\author{Group 04: Uğur ÖZKAN(21050161003), Name2, Name3, Name4, Name5}
+\author{Group 04: Uğur ÖZKAN(21050161003), Eren YILMAZ(22050151024), Name3, Name4, Name5}
 \date{\today}
 
 \begin{document}
@@ -32,17 +32,92 @@ The project aims to develop a dataset for obstacle detection and avoidance in au
 The primary challenge addressed is the difficulty autonomous drones face in reliably detecting and avoiding obstacles, especially in dynamic environments with changing lighting. Reliable obstacle detection is crucial for applications like drone delivery, search-and-rescue operations, and autonomous inspections. By addressing these challenges, the dataset promotes innovation in navigation algorithms and machine learning models for real-world scenarios.
 
 \section{Methodology}
-\textbf{Explain the methods and algorithms used, including relevant equations like:}
+
+This section describes the approaches and techniques used for processing and visualizing multi-sensor data from various sensing modalities.
+
+\subsection{Data Collection and Processing}
+
+The analysis pipeline processes data from five different sensor types:
+
+\begin{itemize}
+    \item RGB Camera Data: Video frames are sampled at intervals of 30 frames to obtain key visual information, with a maximum of 5 frames collected for visualization purposes.
+    
+    \item Dynamic Vision Sensor (DVS): Event-based vision data is processed with parameters DIMX = 240 and DIMY = 180 at 24 FPS. Events are accumulated into frames with polarity-based color coding (red for negative events, blue for positive events).
+    
+    \item OptiTrack Motion Capture: Position data (x, y, z) and orientation quaternions (a, b, c, d) are collected and time-synchronized with other sensor streams. The data provides ground truth trajectory information.
+    
+    \item Inertial Measurement Unit (IMU): Linear accelerations and angular velocities are processed in three axes. A moving average filter with window size W = 15 is applied to reduce noise:
+    
+    \begin{equation}
+        x_{filtered}[n] = \frac{1}{W}\sum_{i=0}^{W-1} x[n+i]
+    \end{equation}
+    
+    \item Radar: Two-antenna radar data is processed using Fast Fourier Transform (FFT) analysis. The processing includes:
+    \begin{enumerate}
+        \item Zero-padding the chirp signals for improved FFT performance
+        \item Computing complex FFT for both receive channels
+        \item Extracting magnitude and phase information
+    \end{enumerate}
+\end{itemize}
+
+\subsection{Data Synchronization and Visualization}
+
+All sensor streams are temporally aligned using timestamps normalized to seconds. The visualization pipeline includes:
+
+\begin{enumerate}
+    \item Time-series plots for OptiTrack position and orientation data
+    \item Filtered and unfiltered IMU measurements visualization
+    \item 2D trajectory plot with obstacle locations marked as circles
+    \item 3D trajectory visualization with cylindrical obstacles
+    \item Radar FFT analysis showing magnitude and phase information
+\end{enumerate}
+
+\subsection{Signal Processing Techniques}
+
+Several signal processing methods are employed:
+
 \begin{equation}
-    y = mx + b
+    FFT_{radar}(re, im) = \{\mathcal{F}(re + j\cdot im)\}
 \end{equation}
 
-Key algorithms process sensor data to extract features and insights, such as Fast Fourier Transform (FFT) applied to radar data to analyze signal magnitude and phase. Relevant equations include the FFT formula:
-\begin{equation}
-X(k) = \sum_{n=0}^{N-1} x(n) e^{-j\frac{2\pi k n}{N}}
-\end{equation} 
+The magnitude and phase are computed as:
 
-This approach highlights periodic patterns crucial for radar-based obstacle detection.
+\begin{equation}
+    magnitude = \sqrt{real^2 + imag^2}
+\end{equation}
+
+\begin{equation}
+    phase = \arctan2(real, imag)
+\end{equation}
+
+For the radar processing, we implement:
+\begin{itemize}
+    \item Zero-padding to improve frequency resolution
+    \item FFT shift for centered frequency representation
+    \item Complex signal processing for both radar channels
+\end{itemize}
+
+\subsection{Coordinate Systems and Transformations}
+
+The system uses multiple coordinate frames:
+\begin{itemize}
+    \item OptiTrack world coordinate system for absolute positioning
+    \item IMU body-fixed coordinate frame for acceleration and angular velocity
+    \item Image coordinates for DVS (240×180 pixels) and RGB camera data
+\end{itemize}
+
+\subsection{Implementation Details}
+
+The implementation utilizes several Python libraries:
+\begin{itemize}
+    \item NumPy for numerical computations and array operations
+    \item Matplotlib for visualization and plotting
+    \item OpenCV (cv2) for RGB video processing
+    \item PIL for image processing
+    \item SciPy for FFT computations and signal processing
+\end{itemize}
+
+The visualization framework is designed to provide comprehensive insight into the sensor fusion dataset, enabling analysis of both spatial and temporal relationships between different sensor modalities.
 \section{Data and Implementation}
 \textbf{Briefly describe the dataset, preprocessing steps, and Python implementation. Include a code snippet if relevant:}
 

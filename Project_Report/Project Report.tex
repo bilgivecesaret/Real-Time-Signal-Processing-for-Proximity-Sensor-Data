@@ -136,22 +136,28 @@ The visualization framework is designed to provide comprehensive insight into th
 \textbf{Briefly describe the dataset, preprocessing steps, and Python implementation. Include a code snippet if relevant:}
 
 The dataset contains data from various sensors stored in CSV format. Preprocessing includes filtering noise and normalizing time series. For example, radar data undergoes FFT for frequency domain analysis, while IMU data uses sliding window filters for smoothing.
+The dataset consists of sensor data stored in CSV format. It includes data from multiple sources such as radar and IMU (Inertial Measurement Unit).
 
 \begin{lstlisting}[language=Python, caption=Radar Data undergoes FFT]
 import numpy as np
 from scipy.fft import fft, fftshift
 
 def fft_radar(re, im):
-    s1 = fftshift(fft(re))
-    s2 = fftshift(fft(im))
-    magnitude = np.sqrt(s1.real*2 + s2.imag*2)
-    return magnitude
+    complex_signal = re + 1j * im
+    s = fftshift(fft(complex_signal))
+    mag = np.abs(s)
+    angle = np.angle(s)
+    return mag, angle
 
 # Load radar sample
 radar_data = np.loadtxt('sample_radar.csv', delimiter=',')
 real_part = radar_data[:, 1]
 imag_part = radar_data[:, 2]
 magnitude = fft_radar(real_part, imag_part)
+
+The provided code snippet demonstrates how radar data is processed using FFT. The real and imaginary components are loaded from the CSV file, transformed into the frequency domain, and combined to calculate the magnitude spectrum.
+
+This approach highlights the use of FFT for extracting meaningful frequency-domain features from radar signals, which is crucial for further analysis.
 
 \end{lstlisting}
 \section{Results and Discussion}

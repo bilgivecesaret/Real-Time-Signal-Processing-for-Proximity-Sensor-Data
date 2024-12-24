@@ -22,7 +22,7 @@
     Uğur ÖZKAN (21050161003), \\
     Eren YILMAZ (22050151024), \\
     Semih MERT (22050171003), \\
-    Name4, \\
+    Sude Nur KİBAROĞLU (21050111059), \\
     Name5
 }
 \date{\today}
@@ -144,7 +144,7 @@ from scipy.fft import fft, fftshift
 def fft_radar(re, im):
     s1 = fftshift(fft(re))
     s2 = fftshift(fft(im))
-    magnitude = np.sqrt(s1.real**2 + s2.imag**2)
+    magnitude = np.sqrt(s1.real*2 + s2.imag*2)
     return magnitude
 
 # Load radar sample
@@ -171,7 +171,32 @@ IMU filtered accelerations: Smooth curves represent stability and noise reductio
 \end{figure}
 
 \section{Conclusion}
-\textbf{Summarize key outcomes and suggest future improvements.}
+
+ In this project, we explored the integration and processing of multi-sensor data to develop a system capable of real-time obstacle detection and UAV navigation. Through a combination of sensors including OptiTrack, radar, DVS cameras, and IMUs, we collected, synchronized, and analyzed diverse data streams, applying advanced signal processing techniques and visualization methods. \\
+
+\textbf{The key achievements of this project are:}
+\begin{itemize}
+    \item Synchronizing data from multiple sensors with varying formats and frequencies to ensure consistency.
+    \item Using \textbf{Fast Fourier Transform (FFT)} for analyzing radar signals in the frequency domain, enabling obstacle identification.
+    \item Employing quaternion representations to process and visualize 3D motion and orientation using OptiTrack data.
+    \item Smoothing IMU sensor data with \textbf{moving average filters} to reduce noise and enhance signal quality.
+    \item Visualizing 2D and 3D trajectories for UAV navigation and evaluating obstacle avoidance strategies.
+\end{itemize}
+
+\setlength{\parindent}{1cm} During this project, we encountered challenges such as sensor noise and temporal misalignment. To address these, we applied basic filtering techniques and synchronized data streams based on timestamps. The FFT played a particularly critical role in transforming radar signals into the frequency domain, where we identified meaningful patterns related to obstacles.
+
+\setlength{\parindent}{1cm} This project allowed us to directly apply concepts from the \textit{Scientific Computing} course, particularly the \textbf{FFT}, which we utilized to process radar signals. Through the FFT, we analyzed radar data to detect obstacles, transforming raw time-domain signals into actionable frequency-domain insights. This was an invaluable opportunity to bridge theoretical knowledge with practical application.
+
+\textbf{Signal Processing Techniques are:}
+\begin{itemize}
+    \item \textbf{Fast Fourier Transform (FFT):} Used for radar signal analysis, converting time-domain signals to the frequency domain.
+    \item \textbf{Moving Average Filter:} Applied to IMU data to smooth out noise and improve signal reliability.
+    \item \textbf{Quaternion Processing:} Used to compute orientation and visualize UAV trajectories in 3D space.
+    \item \textbf{Temporal Synchronization:} Ensured that all sensor data streams were aligned to create a cohesive dataset.
+\end{itemize}
+
+To sum up, this project was an excellent platform for applying and extending the knowledge gained in the classroom. By utilizing techniques like the FFT and signal filtering, we successfully processed and visualized multi-sensor data in a real-world UAV navigation context. The skills and insights developed through this project provide a strong foundation for tackling more complex challenges in autonomous systems and signal processing.
+
 
 \section*{References}
 \begin{itemize}
@@ -184,4 +209,3 @@ IMU filtered accelerations: Smooth curves represent stability and noise reductio
 \end{itemize}
 
 \end{document}
-

@@ -137,6 +137,14 @@ The visualization framework is designed to provide comprehensive insight into th
 
 The dataset contains data from various sensors stored in CSV format. Preprocessing includes filtering noise and normalizing time series. For example, radar data undergoes FFT for frequency domain analysis, while IMU data uses sliding window filters for smoothing.
 The dataset consists of sensor data stored in CSV format. It includes data from multiple sources such as radar and IMU (Inertial Measurement Unit).
+Radar data provides complex signals with real and imaginary components, while IMU data includes measurements like acceleration and angular velocity. The dataset is designed for advanced signal processing and analysis.
+
+Radar Data: Fast Fourier Transform (FFT) is applied to convert signals to the frequency domain for spectral analysis, extracting magnitude and phase information.
+IMU Data: Sliding window filters are used to smooth the time-series data and reduce noise.
+
+From the datasets we obtain:
+From radar.csv: Frequency-domain features like magnitude and phase for spectral analysis.
+From dvs.csv: Event-based spatio-temporal patterns for dynamic motion or activity recognition.
 
 \begin{lstlisting}[language=Python, caption=Radar Data undergoes FFT]
 import numpy as np

@@ -133,7 +133,6 @@ The implementation utilizes several Python libraries:
 
 The visualization framework is designed to provide comprehensive insight into the sensor fusion dataset, enabling analysis of both spatial and temporal relationships between different sensor modalities.
 \section{Data and Implementation}
-\textbf
 
 The dataset contains data from various sensors stored in CSV format. Preprocessing includes filtering noise and normalizing time series. For example, radar data undergoes FFT for frequency domain analysis, while IMU data uses sliding window filters for smoothing.
 The dataset consists of sensor data stored in CSV format. It includes data from multiple sources such as radar and IMU (Inertial Measurement Unit).
@@ -146,28 +145,47 @@ From the datasets we obtain:
 From radar.csv: Frequency-domain features like magnitude and phase for spectral analysis.
 From dvs.csv: Event-based spatio-temporal patterns for dynamic motion or activity recognition.
 
-\begin{lstlisting}[language=Python, caption=Radar Data undergoes FFT]
-import numpy as np
-from scipy.fft import fft, fftshift
-
+\begin{lstlisting}[language=Python, caption=Radar data is processed with FFT to obtain magnitude and angle values.]
 def fft_radar(re, im):
-    complex_signal = re + 1j * im
-    s = fftshift(fft(complex_signal))
-    mag = np.abs(s)
-    angle = np.angle(s)
+    s1 = fftshift(fft(re))
+    s2 = fftshift(fft(im))
+    real = s1.real - s2.imag
+    imag = s1.imag + s2.real
+    mag = (real**2 + imag**2)**0.5
+    angle = np.zeros(len(real))
+    for i in range(len(angle)):
+        angle[i] = math.atan2(real[i], imag[i])
     return mag, angle
+\end{lstlisting}
+\begin{lstlisting}[language=Python, caption=Normalized Frequency]
+    # Get the first chirp and apply 0-padding for better FFT performance
+    chirp_length = int(len(rx1_re[0])/16)
+    re1 = np.zeros(2*chirp_length)
+    re2 = np.zeros(2*chirp_length)
+    im1 = np.zeros(2*chirp_length)
+    im2 = np.zeros(2*chirp_length)
 
-# Load radar sample
-radar_data = np.loadtxt('sample_radar.csv', delimiter=',')
-real_part = radar_data[:, 1]
-imag_part = radar_data[:, 2]
-magnitude = fft_radar(real_part, imag_part)
+    re1[0:chirp_length-1] = rx1_re[id][0:chirp_length-1]
+    re2[0:chirp_length-1] = rx2_re[id][0:chirp_length-1]
+    im1[0:chirp_length-1] = rx1_im[id][0:chirp_length-1]
+    im2[0:chirp_length-1] = rx2_im[id][0:chirp_length-1]
 
+    # Process FFT
+    mag1, angle1 = fft_radar(re1, im1)
+    mag2, angle2 = fft_radar(re2, im2)
+
+    plt.suptitle("Visualization for Radar data - Sample #" + str(ID), size=16)
+
+    # Create normalized frequency axis
+    D = 2
+    N = len(mag1)
+    xf = fftshift(fftfreq(N, 1))[:N]
+\end{lstlisting}
 The provided code snippet demonstrates how radar data is processed using FFT. The real and imaginary components are loaded from the CSV file, transformed into the frequency domain, and combined to calculate the magnitude spectrum.
 
 This approach highlights the use of FFT for extracting meaningful frequency-domain features from radar signals, which is crucial for further analysis.
 
-\end{lstlisting}
+
 \section{Results and Discussion}
 
 This section summarizes the key outcomes of the proposed obstacle detection and navigation pipeline, which integrates data from multiple sensors. We present notable observations from the visualized datasets and discuss their importance in the context of signal processing and system performance.
@@ -177,11 +195,11 @@ This section summarizes the key outcomes of the proposed obstacle detection and 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{OptiTrack_sample_345.png}
-    \caption{Visualization of OptiTrack data for Sample \#345. (Top left) Cartesian coordinates over time; (Top right) Quaternion orientation components over time; (Middle) 2D trajectory with obstacles marked; (Bottom) 3D trajectory visualization with cylindrical obstacles.}
+    \caption{Visualization of OptiTrack data for Sample \#345.(Top left) Cartesian coordinates over time; (Top right) Quaternion orientation components over time; (Middle) 2D trajectory with obstacles marked; (Bottom) 3D trajectory visualization with cylindrical obstacles.}
     \label{fig:OptiTrack}
 \end{figure}
 
-Figure~\ref{fig:OptiTrack} presents the OptiTrack data for a single trial, illustrating the UAV's trajectory in both 2D and 3D space. The Cartesian coordinates (\textit{x}, \textit{y}, \textit{z}) and quaternion components (\textit{a}, \textit{b}, \textit{c}, \textit{d}) are plotted over time. 
+Figure\ref{fig:OptiTrack} presents the OptiTrack data for a single trial, illustrating the UAV's trajectory in both 2D and 3D space. The Cartesian coordinates (\textit{x}, \textit{y}, \textit{z}) and quaternion components (\textit{a}, \textit{b}, \textit{c}, \textit{d}) are plotted over time. 
 
 The 2D trajectory plot shows how the UAV effectively avoids obstacles (red circles), underscoring the reliability of the motion capture system. In the 3D visualization, the UAV maintains stable altitude while navigating around obstacles. These observations confirm that the proposed system can capture precise position data and plan paths that avoid collisions.
 
@@ -194,7 +212,7 @@ The 2D trajectory plot shows how the UAV effectively avoids obstacles (red circl
     \label{fig:Radar}
 \end{figure}
 
-Figure~\ref{fig:Radar} displays the radar data processed using Fast Fourier Transform (FFT). The real and imaginary components of the chirps from two receiving antennas are shown in the top panels, revealing variations caused by obstacle reflections. 
+Figure\ref{fig:Radar} displays the radar data processed using Fast Fourier Transform (FFT). The real and imaginary components of the chirps from two receiving antennas are shown in the top panels, revealing variations caused by obstacle reflections. 
 
 The FFT magnitude plot identifies peaks corresponding to the presence of obstacles at specific distances. The phase plot provides additional insight into the signal's temporal evolution and validates the radar's ability to detect obstacles. Signal processing techniques such as zero-padding and FFT shift were applied to enhance frequency resolution and interpretability.
 
@@ -209,13 +227,14 @@ The radar data results validate the system's capacity to detect obstacles with h
     \label{fig:IMU}
 \end{figure}
 
-Figure~\ref{fig:IMU} shows the IMU data, including linear accelerations and angular velocities. Both raw and filtered signals are plotted, highlighting the effectiveness of the moving average filter in reducing noise. 
+Figure\ref{fig:IMU} shows the IMU data, including linear accelerations and angular velocities. Both raw and filtered signals are plotted, highlighting the effectiveness of the moving average filter in reducing noise. 
 
 The filtered signals exhibit smoother trends, improving the interpretability of motion dynamics. The linear acceleration data reveal consistent patterns during steady-state motion, while angular velocity data capture rotational dynamics. These results underscore the importance of noise filtering in enhancing data quality for navigation tasks.
 
 \subsection{Integrated System Performance}
 
-Overall, the findings confirm that the proposed signal processing methods and data synchronization techniques enable accurate obstacle detection and smooth UAV navigation. The system's ability to integrate and process multi-sensor data is critical for ensuring robustness in dynamic environments. 
+Overall, the findings confirm that the proposed signal processing methods and data synchronization techniques enable accurate obstacle detection and smooth UAV navigation. The system's ability to integrate and process multi-sensor data is critical for ensuring robustness in dynamic environments.
+
 
 The visualized results emphasize the significance of reliable signal processing pipelines in achieving high performance for autonomous UAV operations. By leveraging advanced techniques such as filtering, FFT analysis, and trajectory visualization, the system demonstrates superior obstacle detection and navigation capabilities.
 

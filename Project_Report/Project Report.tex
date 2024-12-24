@@ -23,7 +23,7 @@
     Eren YILMAZ (22050151024), \\
     Semih MERT (22050171003), \\
     Sude Nur KİBAROĞLU (21050111059), \\
-    Name5
+    Aziz Önder, (22050141021)\\
 }
 \date{\today}
 
@@ -155,20 +155,55 @@ magnitude = fft_radar(real_part, imag_part)
 
 \end{lstlisting}
 \section{Results and Discussion}
-\textbf{Present findings with graphs or screenshots:}
 
-Using the provided scripts, radar data visualization showcases signal magnitude and phase for obstacle detection. IMU data plots reveal smoothed accelerations and angular velocities, supporting movement dynamics analysis. Below is an example visualization of FFT magnitude for radar data and smoothed IMU signals:
+This section summarizes the key outcomes of the proposed obstacle detection and navigation pipeline, which integrates data from multiple sensors. We present notable observations from the visualized datasets and discuss their importance in the context of signal processing and system performance.
 
-Graphs:
+\subsection{Trajectory and Position Analysis}
 
-Radar FFT magnitude plot: Peaks indicate obstacle presence at specific distances.
-IMU filtered accelerations: Smooth curves represent stability and noise reduction.
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.8\textwidth]{radar_sample_345.png} 
-    \caption{This is the graph of radar sample 345.}
-    \label{fig:Radar_sample_345}
+    \includegraphics[width=\textwidth]{OptiTrack_sample_345.png}
+    \caption{Visualization of OptiTrack data for Sample \#345. (Top left) Cartesian coordinates over time; (Top right) Quaternion orientation components over time; (Middle) 2D trajectory with obstacles marked; (Bottom) 3D trajectory visualization with cylindrical obstacles.}
+    \label{fig:OptiTrack}
 \end{figure}
+
+Figure~\ref{fig:OptiTrack} presents the OptiTrack data for a single trial, illustrating the UAV's trajectory in both 2D and 3D space. The Cartesian coordinates (\textit{x}, \textit{y}, \textit{z}) and quaternion components (\textit{a}, \textit{b}, \textit{c}, \textit{d}) are plotted over time. 
+
+The 2D trajectory plot shows how the UAV effectively avoids obstacles (red circles), underscoring the reliability of the motion capture system. In the 3D visualization, the UAV maintains stable altitude while navigating around obstacles. These observations confirm that the proposed system can capture precise position data and plan paths that avoid collisions.
+
+\subsection{Radar Signal Processing}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{Radar_sample_345.png}
+    \caption{Radar data visualization for Sample \#345. (Top) Real and imaginary components of the received chirps; (Middle) Magnitude of the FFT; (Bottom) Phase of the FFT.}
+    \label{fig:Radar}
+\end{figure}
+
+Figure~\ref{fig:Radar} displays the radar data processed using Fast Fourier Transform (FFT). The real and imaginary components of the chirps from two receiving antennas are shown in the top panels, revealing variations caused by obstacle reflections. 
+
+The FFT magnitude plot identifies peaks corresponding to the presence of obstacles at specific distances. The phase plot provides additional insight into the signal's temporal evolution and validates the radar's ability to detect obstacles. Signal processing techniques such as zero-padding and FFT shift were applied to enhance frequency resolution and interpretability.
+
+The radar data results validate the system's capacity to detect obstacles with high precision. The peaks in the FFT magnitude indicate distinct obstacles, while phase information helps refine localization. These findings demonstrate the effectiveness of the radar's signal processing pipeline in complex environments.
+
+\subsection{IMU Data Analysis}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{test_imu_345.png}
+    \caption{IMU data visualization for Sample \#345. (Left) Raw and filtered linear accelerations (\textit{x}, \textit{y}, \textit{z}); (Right) Raw and filtered angular velocities (\textit{p}, \textit{q}, \textit{r}).}
+    \label{fig:IMU}
+\end{figure}
+
+Figure~\ref{fig:IMU} shows the IMU data, including linear accelerations and angular velocities. Both raw and filtered signals are plotted, highlighting the effectiveness of the moving average filter in reducing noise. 
+
+The filtered signals exhibit smoother trends, improving the interpretability of motion dynamics. The linear acceleration data reveal consistent patterns during steady-state motion, while angular velocity data capture rotational dynamics. These results underscore the importance of noise filtering in enhancing data quality for navigation tasks.
+
+\subsection{Integrated System Performance}
+
+Overall, the findings confirm that the proposed signal processing methods and data synchronization techniques enable accurate obstacle detection and smooth UAV navigation. The system's ability to integrate and process multi-sensor data is critical for ensuring robustness in dynamic environments. 
+
+The visualized results emphasize the significance of reliable signal processing pipelines in achieving high performance for autonomous UAV operations. By leveraging advanced techniques such as filtering, FFT analysis, and trajectory visualization, the system demonstrates superior obstacle detection and navigation capabilities.
 
 \section{Conclusion}
 

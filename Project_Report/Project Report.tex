@@ -25,11 +25,18 @@
 \maketitle
 \section{Abstract}
 
-The project aims to develop a dataset for obstacle detection and avoidance in autonomous drones, focusing on the challenging "focus of expansion" where optic flow is minimal. Data was collected using a drone equipped with multiple sensors, including event-based cameras, RGB cameras, radar, and IMU, with ground truth provided by an OptiTrack motion capture system. Experiments were conducted under varying light conditions and with different numbers of obstacles. The dataset comprises 1369 trials and is made available in ROS bag and CSV formats for research in navigation and obstacle avoidance.
+The increasing capabilities of autonomous UAVs have led to remarkable feats such as drone racing and aerial acrobatics. However, fundamental tasks like obstacle detection and avoidance remain challenging, especially in scenarios involving the focus of expansion where optic flow is minimal. This difficulty is exacerbated in real-world environments with dynamic lighting conditions, creating a need for robust datasets to benchmark and develop solutions. This paper introduces the Obstacle Avoidance Dataset for Drones, which provides real indoor environment data collected with aerial robotics sensors. The dataset focuses on detecting obstacles around the focus of expansion and includes over 1300 samples under varied conditions of lighting and obstacle placement. Equipped with sensors like an event-based camera, an RGB camera, a 24-GHz radar, and a 6-axes IMU, the dataset also incorporates ground truth position and attitude data from the OptiTrack motion capture system. Data is available in multiple formats, enabling benchmarking of algorithms for obstacle detection, avoidance, and autonomous navigation.
 
 \section{Introduction}
 
-The primary challenge addressed is the difficulty autonomous drones face in reliably detecting and avoiding obstacles, especially in dynamic environments with changing lighting. Reliable obstacle detection is crucial for applications like drone delivery, search-and-rescue operations, and autonomous inspections. By addressing these challenges, the dataset promotes innovation in navigation algorithms and machine learning models for real-world scenarios.
+Unmanned Aerial Vehicles (UAVs) have advanced significantly, performing tasks ranging from autonomous drone racing—as seen in challenges like AlphaPilot 2019—to intricate maneuvers such as crossing windows or executing aerial acrobatics. Despite these achievements, one of the most essential tasks for drones, obstacle detection and avoidance, remains notably difficult to accomplish autonomously. This challenge is rooted in the complexity of detecting obstacles in the focus of expansion, where the optic flow approaches zero. The problem becomes even more pronounced in real-world scenarios with abrupt changes in light intensity, further hindering the robustness of autonomous systems.
+
+Obstacle detection and avoidance is critical for UAVs in various real-life applications, including search and rescue missions, package delivery, and autonomous surveillance. The lack of robustness in this area poses risks to both UAVs and their surroundings. Addressing these challenges requires datasets that simulate real-world conditions and provide high-fidelity data for testing algorithms.
+
+To bridge this gap, the Obstacle Avoidance Dataset for Drones was developed. This dataset focuses on obstacle detection near the focus of expansion and offers data collected in an indoor flying arena under controlled conditions. The setup features a Micro Aerial Vehicle (MAV) equipped with advanced sensors such as an event-based camera, a 6-axes IMU, a 24-GHz radar, and a full HD RGB camera. The dataset includes ground truth data provided by the OptiTrack motion capture system, ensuring accurate benchmarking. With 1369 trials recorded under different lighting and obstacle conditions, this dataset serves as a valuable resource for researchers and developers aiming to improve UAV navigation and obstacle avoidance capabilities.
+
+The MAV operates within the Cyber Zoo at TU Delft, a specialized flying arena, and data collection is managed via a ROS environment running on an onboard Odroid XU4 system. Trials involve navigating through one or two obstacles under full light (100 Lux) or dim light (1-3 Lux) conditions. The dataset, provided in both ROS bag and CSV formats, includes raw sensor data and ground truth, alongside RGB camera footage. This comprehensive collection supports the development of robust, multi-sensory solutions for autonomous navigation and obstacle avoidance, offering a foundation for future innovations in aerial robotics.
+
 
 \section{Methodology}
 
@@ -160,9 +167,14 @@ IMU filtered accelerations: Smooth curves represent stability and noise reductio
 \textbf{Summarize key outcomes and suggest future improvements.}
 
 \section*{References}
-\textbf{List all references, e.g., datasets, websites, or papers.}
-
-\url{https://github.com/JuSquare/ODA_Dataset/tree/master}
+\begin{itemize}
+    \item \url{https://github.com/bilgivecesaret/Real-Time-Signal-Processing-for-Proximity-Sensor-Data}
+    \item \url{https://github.com/JuSquare/ODA_Dataset/tree/master}
+    \item \url{https://www.lockheedmartin.com/en-us/news/events/ai-innovation-challenge.html}
+    \item \url{https://data.4tu.nl/articles/dataset/The_Obstacle_Detection_and_Avoidance_Dataset_for_Drones/14214236/1}
+    \item  \url{https://www.roboticsproceedings.org/rss16/p040.pdf}
+    \item \url{https://www.liebertpub.com/doi/full/10.1089/soro.2017.0120}   
+\end{itemize}
 
 \end{document}
 
